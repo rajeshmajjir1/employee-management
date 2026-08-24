@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>View Employee</title>
+    
+    <link rel="stylesheet"
+      th:href="@{/css/style.css}">
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width: 600px;
+            margin: 40px auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .detail {
+            display: flex;
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .label {
+            width: 180px;
+            font-weight: bold;
+        }
+
+        .value {
+            flex: 1;
+        }
+
+        .buttons {
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            text-decoration: none;
+            color: white;
+            border-radius: 4px;
+        }
+
+        .back {
+            background-color: #6c757d;
+        }
+
+        .edit {
+            background-color: #28a745;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<div th:replace="~{fragments :: navigation}"></div>
+
+<div class="container">
+
+    <h1>Employee Details</h1>
+
+    <div class="detail">
+
+        <div class="label">
+            Employee ID
+        </div>
+
+        <div class="value"
+             th:text="${employee.id}">
+        </div>
+
+    </div>
+
+    <div class="detail">
+
+        <div class="label">
+            First Name
+        </div>
+
+        <div class="value"
+             th:text="${employee.firstName}">
+        </div>
+
+    </div>
+
+    <div class="detail">
+
+        <div class="label">
+            Last Name
+        </div>
+
+        <div class="value"
+             th:text="${employee.lastName}">
+        </div>
+
+    </div>
+
+    <div class="detail">
+
+        <div class="label">
+            Date of Birth
+        </div>
+
+        <div class="value"
+             th:text="${employee.dob}">
+        </div>
+
+    </div>
+
+    <div class="detail">
+
+        <div class="label">
+            Department
+        </div>
+
+        <div class="value"
+             th:text="${employee.department.name}">
+        </div>
+
+    </div>
+
+    <div class="detail">
+
+        <div class="label">
+            Salary
+        </div>
+
+        <div class="value"
+             th:text="${employee.salary}">
+        </div>
+
+    </div>
+
+    <div class="detail">
+
+        <div class="label">
+            Manager
+        </div>
+
+        <div class="value"
+             th:text="${employee.manager != null ?
+                       employee.manager.firstName + ' ' +
+                       employee.manager.lastName :
+                       '-'}">
+        </div>
+
+    </div>
+
+    <div class="buttons">
+
+        <a class="button back"
+           th:href="@{/employees}">
+            Back
+        </a>
+
+        <a class="button edit"
+           th:href="@{/employees/edit/{id}(id=${employee.id})}">
+            Edit
+        </a>
+
+    </div>
+
+</div>
+
+</body>
+
+</html>

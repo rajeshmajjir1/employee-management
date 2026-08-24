@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <title>Employee Listing</title>
+
+    <link rel="stylesheet"
+          th:href="@{/css/style.css}">
+
+    <style>
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+
+        th,
+        td {
+            padding: 12px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #374151;
+            color: white;
+        }
+
+        .action-link {
+            margin-right: 10px;
+            text-decoration: none;
+        }
+
+        .view {
+            color: #007bff;
+        }
+
+        .edit {
+            color: #28a745;
+        }
+
+        .empty-message {
+            background-color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .page-title {
+            margin-bottom: 20px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+<!-- Navigation -->
+<div th:replace="~{fragments :: navigation}"></div>
+
+
+<div class="container">
+
+    <h1 class="page-title">
+        Employee Listing
+    </h1>
+
+    <div class="empty-message"
+         th:if="${#lists.isEmpty(employees)}">
+
+        No employees found.
+
+    </div>
+
+    <table th:if="${!#lists.isEmpty(employees)}">
+
+        <thead>
+
+        <tr>
+
+            <th>ID</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>DOB</th>
+            <th>Department</th>
+            <th>Salary</th>
+            <th>Manager</th>
+            <th>Actions</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        <tr th:each="employee : ${employees}">
+
+            <td th:text="${employee.id}"></td>
+
+            <td th:text="${employee.firstName}"></td>
+
+            <td th:text="${employee.lastName}"></td>
+
+            <td th:text="${employee.dob}"></td>
+
+            <td th:text="${employee.department.name}"></td>
+
+            <td th:text="${employee.salary}"></td>
+
+            <td th:text="${employee.manager != null ?
+                          employee.manager.firstName + ' ' +
+                          employee.manager.lastName :
+                          '-'}">
+            </td>
+
+            <td>
+
+                <a class="action-link view"
+                   th:href="@{/employees/view/{id}(id=${employee.id})}">
+                    View
+                </a>
+
+                <a class="action-link edit"
+                   th:href="@{/employees/edit/{id}(id=${employee.id})}">
+                    Edit
+                </a>
+
+            </td>
+
+        </tr>
+
+        </tbody>
+
+    </table>
+
+</div>
+
+<script th:src="@{/js/employee-list.js}"></script>
+
+</body>
+
+</html>
