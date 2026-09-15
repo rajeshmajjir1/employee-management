@@ -25,43 +25,166 @@ public class EmployeeService {
         this.passportStorageService = passportStorageService;
     }
 
+    /**
+     * Get all employees.
+     */
     public List<Employee> getAllEmployees() {
+
         return employeeRepository.findAll();
     }
 
+    /**
+     * Get employee by ID.
+     */
     public Optional<Employee> getEmployeeById(Long id) {
+
         return employeeRepository.findById(id);
     }
 
-    /*
-     * Existing save method.
-     * This can still be used when no passport upload is involved.
+    /**
+     * Save employee without passport.
      */
     public Employee saveEmployee(Employee employee) {
+
         return employeeRepository.save(employee);
     }
 
-    /*
-     * Save employee with passport upload.
+    /**
+     * Save employee with optional passport.
+     *
+     * Create:
+     * - Passport is mandatory.
+     *
+     * Update:
+     * - Passport is optional.
+     * - Existing passport is retained if no new file is supplied.
+     * - Existing passport metadata is preserved.
+     * - New passport replaces the old passport metadata.
      */
     public Employee saveEmployee(
             Employee employee,
             MultipartFile passport) {
 
-        // Validate passport
-        String validationError =
-                PassportFileValidator.validate(passport);
+        /*
+         * CREATE
+         */
+        if (employee.getId() == null) {
 
-        if (validationError != null) {
-            throw new IllegalArgumentException(validationError);
+            /*
+             * Passport is mandatory when
+             * creating a new employee.
+             */
+            if (passport == null || passport.isEmpty()) {
+
+                throw new IllegalArgumentException(
+                        "Passport file is required."
+                );
+            }
+
+            /*
+             * Validate passport.
+             */
+            String validationError =
+                    PassportFileValidator.validate(passport);
+
+            if (validationError != null) {
+
+                throw new IllegalArgumentException(
+                        validationError
+                );
+            }
+
+            /*
+             * Store passport file.
+             */
+            storePassport(employee, passport);
+
+            return employeeRepository.save(employee);
         }
 
-        // Store passport file
+        /*
+         * UPDATE
+         */
+
+        /*
+         * Load the existing employee from database.
+         */
+        Employee existingEmployee =
+                employeeRepository.findById(employee.getId())
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Employee not found: "
+                                                + employee.getId()
+                                )
+                        );
+
+        /*
+         * Preserve existing passport information.
+         *
+         * This is important because the edit form
+         * does not submit the existing physical file.
+         */
+        employee.setPassportFileName(
+                existingEmployee.getPassportFileName()
+        );
+
+        employee.setPassportOriginalFileName(
+                existingEmployee.getPassportOriginalFileName()
+        );
+
+        employee.setPassportContentType(
+                existingEmployee.getPassportContentType()
+        );
+
+        employee.setPassportFileSize(
+                existingEmployee.getPassportFileSize()
+        );
+
+        employee.setPassportUploadedAt(
+                existingEmployee.getPassportUploadedAt()
+        );
+
+        /*
+         * If user selected a new passport,
+         * validate and replace the passport metadata.
+         */
+        if (passport != null && !passport.isEmpty()) {
+
+            String validationError =
+                    PassportFileValidator.validate(passport);
+
+            if (validationError != null) {
+
+                throw new IllegalArgumentException(
+                        validationError
+                );
+            }
+
+            /*
+             * Store the new passport.
+             */
+            storePassport(employee, passport);
+        }
+
+        /*
+         * Save updated employee.
+         */
+        return employeeRepository.save(employee);
+    }
+
+    /**
+     * Store passport and update employee metadata.
+     */
+    private void storePassport(
+            Employee employee,
+            MultipartFile passport) {
+
         String storedFileName =
                 passportStorageService.store(passport);
 
-        // Store passport metadata
-        employee.setPassportFileName(storedFileName);
+        employee.setPassportFileName(
+                storedFileName
+        );
 
         employee.setPassportOriginalFileName(
                 passport.getOriginalFilename()
@@ -78,8 +201,5 @@ public class EmployeeService {
         employee.setPassportUploadedAt(
                 LocalDateTime.now()
         );
-
-        // Save employee
-        return employeeRepository.save(employee);
     }
 }
