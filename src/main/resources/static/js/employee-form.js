@@ -72,6 +72,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
                 isValid = false;
             }
+			else { // Calculate the date exactly 18 years ago
+			 const minimumDob = new Date( today.getFullYear() - 18, today.getMonth(), today.getDate() ); 
+			 // Employee must be at least 18 years old
+			 if (selectedDate > minimumDob) { showError( dob, "Employee must be at least 18 years old." ); isValid = false; 
+				
+			 } 
+		 }
         }
 
         // Department validation

@@ -1,9 +1,22 @@
 package com.example.employeemanagement.entity;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.example.employeemanagement.validation.MinimumAge;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 @Table(name = "employees")
@@ -22,6 +35,7 @@ public class Employee {
     private String lastName;
 
     @NotNull(message = "Date of birth is required")
+    @MinimumAge(value = 18, message = "Employee must be at least 18 years old")
     @Column(name = "dob", nullable = false)
     private LocalDate dob;
 
@@ -38,6 +52,21 @@ public class Employee {
     @ManyToOne
     @JoinColumn(name = "manager_id")
     private Employee manager;
+    
+    @Column(name = "passport_file_name")
+    private String passportFileName;
+
+    @Column(name = "passport_original_file_name")
+    private String passportOriginalFileName;
+
+    @Column(name = "passport_content_type")
+    private String passportContentType;
+
+    @Column(name = "passport_file_size")
+    private Long passportFileSize;
+
+    @Column(name = "passport_uploaded_at")
+    private LocalDateTime passportUploadedAt;
 
 	public Long getId() {
 		return id;
@@ -93,6 +122,46 @@ public class Employee {
 
 	public void setManager(Employee manager) {
 		this.manager = manager;
+	}
+
+	public String getPassportFileName() {
+		return passportFileName;
+	}
+
+	public void setPassportFileName(String passportFileName) {
+		this.passportFileName = passportFileName;
+	}
+
+	public String getPassportOriginalFileName() {
+		return passportOriginalFileName;
+	}
+
+	public void setPassportOriginalFileName(String passportOriginalFileName) {
+		this.passportOriginalFileName = passportOriginalFileName;
+	}
+
+	public String getPassportContentType() {
+		return passportContentType;
+	}
+
+	public void setPassportContentType(String passportContentType) {
+		this.passportContentType = passportContentType;
+	}
+
+	public Long getPassportFileSize() {
+		return passportFileSize;
+	}
+
+	public void setPassportFileSize(Long passportFileSize) {
+		this.passportFileSize = passportFileSize;
+	}
+
+	public LocalDateTime getPassportUploadedAt() {
+		return passportUploadedAt;
+	}
+
+	public void setPassportUploadedAt(LocalDateTime passportUploadedAt) {
+		this.passportUploadedAt = passportUploadedAt;
 	}
 
     

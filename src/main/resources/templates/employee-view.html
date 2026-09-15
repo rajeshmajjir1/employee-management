@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -7,9 +8,9 @@
     <meta charset="UTF-8">
 
     <title>View Employee</title>
-    
+
     <link rel="stylesheet"
-      th:href="@{/css/style.css}">
+          th:href="@{/css/style.css}">
 
     <style>
 
@@ -28,6 +29,7 @@
 
         h1 {
             text-align: center;
+            margin-bottom: 25px;
         }
 
         .detail {
@@ -43,6 +45,21 @@
 
         .value {
             flex: 1;
+        }
+
+        .passport-link {
+            color: #6f42c1;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .passport-link:hover {
+            text-decoration: underline;
+        }
+
+        .no-passport {
+            color: #999;
+            font-style: italic;
         }
 
         .buttons {
@@ -67,6 +84,14 @@
             background-color: #28a745;
         }
 
+        .passport {
+            background-color: #6f42c1;
+        }
+
+        .button:hover {
+            opacity: 0.9;
+        }
+
     </style>
 
 </head>
@@ -75,10 +100,13 @@
 
 <div th:replace="~{fragments :: navigation}"></div>
 
+
 <div class="container">
 
     <h1>Employee Details</h1>
 
+
+    <!-- Employee ID -->
     <div class="detail">
 
         <div class="label">
@@ -91,6 +119,8 @@
 
     </div>
 
+
+    <!-- First Name -->
     <div class="detail">
 
         <div class="label">
@@ -103,6 +133,8 @@
 
     </div>
 
+
+    <!-- Last Name -->
     <div class="detail">
 
         <div class="label">
@@ -115,6 +147,8 @@
 
     </div>
 
+
+    <!-- Date of Birth -->
     <div class="detail">
 
         <div class="label">
@@ -127,6 +161,8 @@
 
     </div>
 
+
+    <!-- Department -->
     <div class="detail">
 
         <div class="label">
@@ -134,11 +170,15 @@
         </div>
 
         <div class="value"
-             th:text="${employee.department.name}">
+             th:text="${employee.department != null
+                       ? employee.department.name
+                       : '-'}">
         </div>
 
     </div>
 
+
+    <!-- Salary -->
     <div class="detail">
 
         <div class="label">
@@ -151,6 +191,8 @@
 
     </div>
 
+
+    <!-- Manager -->
     <div class="detail">
 
         <div class="label">
@@ -158,24 +200,148 @@
         </div>
 
         <div class="value"
-             th:text="${employee.manager != null ?
-                       employee.manager.firstName + ' ' +
-                       employee.manager.lastName :
-                       '-'}">
+             th:text="${employee.manager != null
+                       ? employee.manager.firstName + ' '
+                         + employee.manager.lastName
+                       : '-'}">
         </div>
 
     </div>
 
+
+    <!-- Passport -->
+    <div class="detail">
+
+        <div class="label">
+            Passport
+        </div>
+
+        <div class="value">
+
+            <!-- Passport Uploaded -->
+            <div th:if="${employee.passportFileName != null}">
+
+                <div>
+                    <span
+                        th:text="${employee.passportOriginalFileName}">
+                        passport.pdf
+                    </span>
+                </div>
+
+                <div style="margin-top: 8px;">
+
+                    <a class="passport-link"
+                       th:href="@{/employees/passport/{id}(id=${employee.id})}"
+                       target="_blank">
+
+                        View Passport
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- Passport Not Uploaded -->
+            <span class="no-passport"
+                  th:if="${employee.passportFileName == null}">
+
+                Passport not uploaded
+
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- Passport Content Type -->
+    <div class="detail"
+         th:if="${employee.passportContentType != null}">
+
+        <div class="label">
+            File Type
+        </div>
+
+        <div class="value"
+             th:text="${employee.passportContentType}">
+            application/pdf
+        </div>
+
+    </div>
+
+
+    <!-- Passport File Size -->
+    <div class="detail"
+         th:if="${employee.passportFileSize != null}">
+
+        <div class="label">
+            File Size
+        </div>
+
+        <div class="value"
+             th:text="${#numbers.formatDecimal(
+                         employee.passportFileSize / 1024.0,
+                         1,
+                         2
+                       ) + ' KB'}">
+
+            100 KB
+
+        </div>
+
+    </div>
+
+
+    <!-- Passport Uploaded Date -->
+    <div class="detail"
+         th:if="${employee.passportUploadedAt != null}">
+
+        <div class="label">
+            Uploaded At
+        </div>
+
+        <div class="value"
+             th:text="${#temporals.format(
+                         employee.passportUploadedAt,
+                         'dd-MM-yyyy HH:mm'
+                       )}">
+
+            01-01-2026 10:30
+
+        </div>
+
+    </div>
+
+
+    <!-- Buttons -->
     <div class="buttons">
 
         <a class="button back"
            th:href="@{/employees}">
+
             Back
+
         </a>
+
 
         <a class="button edit"
            th:href="@{/employees/edit/{id}(id=${employee.id})}">
+
             Edit
+
+        </a>
+
+
+        <!-- View Passport Button -->
+        <a class="button passport"
+           th:if="${employee.passportFileName != null}"
+           th:href="@{/employees/passport/{id}(id=${employee.id})}"
+           target="_blank">
+
+            View Passport
+
         </a>
 
     </div>

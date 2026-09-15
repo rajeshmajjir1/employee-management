@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en"
       xmlns:th="http://www.thymeleaf.org">
 
@@ -44,6 +45,15 @@
             color: #28a745;
         }
 
+        .passport {
+            color: #6f42c1;
+        }
+
+        .no-passport {
+            color: #999;
+            font-style: italic;
+        }
+
         .empty-message {
             background-color: white;
             padding: 20px;
@@ -70,12 +80,14 @@
         Employee Listing
     </h1>
 
+
     <div class="empty-message"
          th:if="${#lists.isEmpty(employees)}">
 
         No employees found.
 
     </div>
+
 
     <table th:if="${!#lists.isEmpty(employees)}">
 
@@ -84,50 +96,113 @@
         <tr>
 
             <th>ID</th>
+
             <th>First Name</th>
+
             <th>Last Name</th>
+
             <th>DOB</th>
+
             <th>Department</th>
+
             <th>Salary</th>
+
             <th>Manager</th>
+
+            <th>Passport</th>
+
             <th>Actions</th>
 
         </tr>
 
         </thead>
 
+
         <tbody>
 
         <tr th:each="employee : ${employees}">
 
-            <td th:text="${employee.id}"></td>
-
-            <td th:text="${employee.firstName}"></td>
-
-            <td th:text="${employee.lastName}"></td>
-
-            <td th:text="${employee.dob}"></td>
-
-            <td th:text="${employee.department.name}"></td>
-
-            <td th:text="${employee.salary}"></td>
-
-            <td th:text="${employee.manager != null ?
-                          employee.manager.firstName + ' ' +
-                          employee.manager.lastName :
-                          '-'}">
+            <!-- ID -->
+            <td th:text="${employee.id}">
             </td>
 
+
+            <!-- First Name -->
+            <td th:text="${employee.firstName}">
+            </td>
+
+
+            <!-- Last Name -->
+            <td th:text="${employee.lastName}">
+            </td>
+
+
+            <!-- DOB -->
+            <td th:text="${employee.dob}">
+            </td>
+
+
+            <!-- Department -->
+            <td th:text="${employee.department != null
+                          ? employee.department.name
+                          : '-'}">
+            </td>
+
+
+            <!-- Salary -->
+            <td th:text="${employee.salary}">
+            </td>
+
+
+            <!-- Manager -->
+            <td th:text="${employee.manager != null
+                          ? employee.manager.firstName + ' '
+                            + employee.manager.lastName
+                          : '-'}">
+            </td>
+
+
+            <!-- Passport -->
+            <td>
+
+                <!-- Passport exists -->
+                <a class="action-link passport"
+                   th:if="${employee.passportFileName != null}"
+                   th:href="@{/employees/passport/{id}(id=${employee.id})}"
+                   target="_blank">
+
+                    View Passport
+
+                </a>
+
+
+                <!-- Passport does not exist -->
+                <span class="no-passport"
+                      th:if="${employee.passportFileName == null}">
+
+                    Not Uploaded
+
+                </span>
+
+            </td>
+
+
+            <!-- Actions -->
             <td>
 
                 <a class="action-link view"
                    th:href="@{/employees/view/{id}(id=${employee.id})}">
+
                     View
+
                 </a>
+
 
                 <a class="action-link edit"
                    th:href="@{/employees/edit/{id}(id=${employee.id})}">
+
                     Edit
+
                 </a>
 
             </td>
@@ -140,7 +215,9 @@
 
 </div>
 
-<script th:src="@{/js/employee-list.js}"></script>
+
+<script th:src="@{/js/employee-list.js}">
+</script>
 
 </body>
 
